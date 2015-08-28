@@ -44,12 +44,19 @@ var styles = {
     WebkitTransition: '-webkit-transform .3s ease-out',
     WebkitTransform: 'translateX(-100%)',
     willChange: 'transform',
-    backgroundColor: 'white',
+    backgroundColor: '#444444',
     overflowY: 'auto' },
   content: {
     position: 'absolute',
     top: 0,
     left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: 'auto',
+    transition: 'left .3s ease-out' },
+  contentTrigger: {
+    position: 'relative',
+    top: 0,
     right: 0,
     bottom: 0,
     overflow: 'auto',
@@ -90,7 +97,7 @@ var Sidebar = (function (_React$Component) {
       touchCurrentY: null,
 
       // if touch is supported by the browser
-      dragSupported: typeof window === 'object' && 'ontouchstart' in window };
+      dragSupported: 'ontouchstart' in window };
 
     this.overlayClicked = this.overlayClicked.bind(this);
     this.onTouchStart = this.onTouchStart.bind(this);
@@ -233,7 +240,6 @@ var Sidebar = (function (_React$Component) {
           useTouch = this.state.dragSupported && this.props.touch,
           isTouching = this.isTouching(),
           dragHandle = undefined;
-
       var rootProps = {
         style: styles.root };
 
@@ -273,18 +279,62 @@ var Sidebar = (function (_React$Component) {
         overlayStyle = update(overlayStyle, { $merge: {
             opacity: 1,
             visibility: 'visible' } });
+        if(this.props.push){
+          if (window.matchMedia("(orientation: portrait)").matches) {
+            sidebarStyle.width = '80%';
+            sidebarStyle = update(sidebarStyle, { $merge: {
+                transform: 'translateX(0%)',
+                WebkitTransform: 'translateX(0%)' } });
+            styles.contentTrigger.left = '80%';
+            contentStyle = update(styles.contentTrigger, { $merge: {} });
+          }
+
+          if (window.matchMedia("(orientation: landscape)").matches) {
+              var sidebarWidth = window.innerWidth - window.innerHeight;
+              sidebarStyle.width = sidebarWidth;
+              sidebarStyle = update(sidebarStyle, { $merge: {
+                  } });
+              styles.contentTrigger.left = sidebarWidth;
+              contentStyle = update(styles.contentTrigger, { $merge: {} });
+
+
+          }
+        }else{
+
+        }
       }
 
       if (isTouching || !this.props.transitions) {
-        sidebarStyle = update(sidebarStyle, { $merge: {
+        /*sidebarStyle = update(sidebarStyle, { $merge: {
             transition: 'none',
             WebkitTransition: 'none' } });
-
+*/
         contentStyle = update(contentStyle, { $merge: {
             transition: 'none' } });
 
         overlayStyle = update(overlayStyle, { $merge: {
             transition: 'none' } });
+       if(this.props.push){
+          if (window.matchMedia("(orientation: portrait)").matches) {
+            sidebarStyle.width = '80%';
+            sidebarStyle = update(sidebarStyle, { $merge: {
+                transform: 'translateX(0%)',
+                WebkitTransform: 'translateX(0%)' } });
+            styles.contentTrigger.left = '80%';
+            contentStyle = update(styles.contentTrigger, { $merge: {} });
+          }
+
+          if (window.matchMedia("(orientation: landscape)").matches) {
+              var sidebarWidth = window.innerWidth - window.innerHeight;
+              sidebarStyle.width = sidebarWidth;
+              sidebarStyle = update(sidebarStyle, { $merge: {
+                  } });
+              styles.contentTrigger.left = sidebarWidth;
+              contentStyle = update(styles.contentTrigger, { $merge: {} });
+
+
+          }
+        }
       }
 
       if (useTouch) {
@@ -368,3 +418,4 @@ Sidebar.defaultProps = {
 
 exports['default'] = Sidebar;
 module.exports = exports['default'];
+
